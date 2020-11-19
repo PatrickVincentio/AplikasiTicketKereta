@@ -5,7 +5,7 @@ from datetime import datetime
 def print_menu():
 	system("cls")
 	print("""
-	Penyimpanan Tiket Kereta
+	Penyimpanan ticket Kereta
 	[1]. Lihat Semua Ticket Yang Tersedia
 	[2]. Menambah Ticket Baru
 	[3]. Mencari Ticket Tersedia
@@ -20,7 +20,7 @@ def print_header(msg):
 	print(msg)
 
 def not_empty(container):
-	if len(container) != 0:
+	if len(container) !=0:
 		return True
 	else:
 		return False
@@ -31,193 +31,198 @@ def verify_ans(char):
 	else:
 		return False
 
-def print_data(id_contact=None, telp=True, hobi=True, all_data=False):
-	if id_contact != None and all_data == False:
-		print(f"ID : {id_contact}")
-		print(f"NAMA : {contacts[id_contact]['nama']}")
-		print(f"TELP : {contacts[id_contact]['telp']}")
-		print(f"HOBI : {contacts[id_contact]['hobi']}")
-	elif hobi == False and all_data == False:
-		print(f"ID : {id_contact}")
-		print(f"NAMA : {contacts[id_contact]['nama']}")
-		print(f"TELP : {contacts[id_contact]['telp']}")
+def print_data(id_ticket=None, all_data=False):
+	if id_ticket != None and all_data == False:
+		print(f"ID : {id_ticket}")
+		print(f"DESTINASI : {tickets[id_ticket]['destinasi']}")
+		print(f"KERETA_API : {tickets[id_ticket]['kereta_api']}")
+		print(f"TERMINAL : {tickets[id_ticket]['terminal']}")
 	elif all_data == True:
-		for id_contact in contacts: # lists, string, dict
-			nama = contacts[id_contact]["nama"]
-			telp = contacts[id_contact]["telp"]
-			hobi = contacts[id_contact]["hobi"]
-			print(f"ID : {id_contact} - NAMA : {nama} - TELP : {telp} - HOBI : {hobi}")
+		for id_ticket in tickets:# lists, string, dict
+			print(f"ID : {id_ticket}")
+			print(f"DESTINASI : {tickets[id_ticket]['destinasi']}")
+			print(f"KERETA_API : {tickets[id_ticket]['kereta_api']}")
+			print(f"TERMINAL : {tickets[id_ticket]['terminal']}")
 
-def view_contacts():
-	print_header("DAFTAR KONTAK TERSIMPAN")
-	if not_empty(contacts):
+def view_tickets():
+	print_header("DAFTAR TIKET TERSEDIA")
+	if not_empty(tickets):
 		print_data(all_data=True)
 	else:
-		print("MAAF BELUM ADA KONTAK TERSIMPAN")
+		print("MAAF BELUM ADA TIKET TERSEDIA")
 	input("Tekan ENTER untuk kembali ke MENU")
 
-def create_id_contact(name, phone):
+def create_id_ticket(ticket, train):
 	hari_ini = datetime.now()
 	tahun = hari_ini.year
 	bulan = hari_ini.month
 	hari = hari_ini.day
 
-	counter = len(contacts) + 1
-	first = name[0].upper()
-	last_4 = phone[-4:]
+	counter = len(ticket) + 1
+	first = ticket[0].upper()
+	last_4 = train[-4:]
 	
-	id_contact = ("%04d%02d%02d-C%03d%s%s" % (tahun, bulan, hari, counter, first, last_4))
-	return id_contact
+	id_ticket = ("%04d%02d%02d-C%03d%s%s" % (tahun, bulan, hari, counter, first, last_4))
+	return id_ticket
 
-
-
-def add_contact():
-	print_header("MENAMBAHKAN KONTAK BARU")
-	nama = input("NAMA \t: ")
-	telp = input("TELP \t: ")
-	hobi = input("HOBI \t: ")
-	respon = input(f"Apakah yakin ingin menyimpan kontak : {nama} ? (Y/N) ")
+def add_ticket():
+	print_header("MENAMBAHKAN ticket BARU")
+	destinasi = input("DESTINASI \t: ")
+	kereta_api = input("KERETA_API \t: ")
+	terminal = input("TERMINAL \t: ")
+	respon = input(f"Apakah yakin ingin menambahkan ticket : {destinasi} ? (Y/N) ")
 	if verify_ans(respon):
-		id_contact = create_id_contact(name=nama, phone=telp)
-		contacts[id_contact] = {
-			"nama" : nama,
-			"telp" : telp,
-			"hobi" : hobi
+		id_ticket = create_id_ticket(ticket=destinasi, train=kereta_api)
+		tickets[id_ticket] = {
+			"destinasi" : destinasi,
+			"kereta_api" : kereta_api,
+			"terminal" : terminal
 		}
-		saved = save_data_contacts()
+		saved= save_data_tickets()
 		if saved:
-			print("Data Kontak Tersimpan.")
+			print("Data ticket Tersimpan.")
 		else:
 			print("Kesalahan saat menyimpan")
 	else:
 		print("Data Batal Disimpan")
 	input("Tekan ENTER untuk kembali ke MENU")
 
-def searching_by_name(contact):
-	for id_contact in contacts:
-		if contacts[id_contact]['nama'] == contact:
-			return id_contact
+def searching_by_destinasi(ticket):
+	for id_ticket in tickets:
+		if tickets[id_ticket]['destinasi'] == ticket:
+			return id_ticket
 	else:
 		return False
 
-def find_contact():
-	print_header("MENCARI KONTAK")
-	nama = input("Nama Kontak yang Dicari : ")
-	exists = searching_by_name(nama)
+def find_ticket():
+	print_header("MENCARI TICKET")
+	destinasi = input("destinasi ticket yang Dicari : ")
+	exists = searching_by_destinasi(destinasi)
 	if exists:
 		print("Data Ditemukan")
-		print_data(id_contact=exists)
+		print_data(id_ticket=exists)
 	else:
 		print("Data Tidak Ada")
 	input("Tekan ENTER untuk kembali ke MENU")
 
-def delete_contact():
-	print_header("MENGHAPUS KONTAK")
-	nama = input("Nama Kontak yang akan Dihapus : ")
-	exists = searching(nama)
+def delete_ticket():
+	print_header("MENGHAPUS ticket")
+	destinasi = input("Destinasi Ticket yang akan Dihapus : ")
+	exists = searching_by_destinasi(destinasi)
 	if exists:
-		print_data(contact=nama)
-		respon = input(f"Yakin ingin menghapus {nama} ? (Y/N) ")
+		print_data(id_ticket=exists)
+		respon = input(f"Yakin ingin mengapus {destinasi} ? (Y/N) ")
 		if verify_ans(respon):
-			del contacts[nama]
-			saved = save_data_contacts()
+			del tickets[exists]
+			saved= save_data_tickets()
 			if saved:
-				print("Data Kontak Telah Dihapus")
+				print("Data ticket Telah Dihapus.")
 			else:
 				print("Kesalahan saat menyimpan")
 		else:
-			print("Data Kontak Batal Dihapus")
+			print("Data ticket Batal Dihapus")
 	else:
 		print("Data Tidak Ada")
 	input("Tekan ENTER untuk kembali ke MENU")
 
-def update_contact_nama(contact):
-	print(f"Nama Lama : {contact}")
-	new_name = input("Masukkan Nama baru : ")
+def update_ticket_destinasi(id_ticket):
+	print(f"Destinasi Lama : {tickets[id_ticket]['destinasi']}")
+	new_destinasi = input("Masukkan Destinasi baru : ")
 	respon = input("Apakah yakin data ingin diubah (Y/N) : ")
 	result = verify_ans(respon)
 	if result :
-		contacts[new_name] = contacts[contact]
-		del contacts[contact]
+		tickets[id_ticket]['destinasi'] = new_destinasi
 		print("Data Telah di simpan")
-		print_data(new_name)
+		print_data(id_ticket)
 	else:
 		print("Data Batal diubah")
 
-def update_contact_telp(contact):
-	print(f"Nomor Telpon Lama : {contacts[contact]['telp']}")
-	new_telp = input("Masukkan Nomor Telepon Baru : ")
+def update_ticket_kereta_api(id_ticket):
+	print(f"kereta api Lama : {tickets[id_ticket]['kereta_api']}")
+	new_kereta_api = input("Masukkan kereta api Baru : ")
 	respon = input("Apakah yakin data ingin diubah (Y/N) : ")
 	result = verify_ans(respon)
-	if result :
-		contacts[contact]['telp'] = new_telp
+	if result:
+		tickets[ticket]['kereta_api'] = new_kereta_api
 		print("Data Telah di simpan")
-		print_data(contact)
+		print_data(id_ticket)
 	else:
 		print("Data Batal diubah")
 
-def update_contact_hobi(contact):
-	pass
+def update_ticket_terminal(ticket):
+	print(f"Terminal sebelumnya : {tickets[ticket]['terminal']}")
+	new_terminal = input("Masukkan Terminal Baru : ")
+	respon = input("Apakah yakin data ingin diubah (Y/N) : ")
+	result = verify_ans(respon)
+	if result:
+		tickets[ticket]['terminal'] = new_terminal
+		print("Data Telah di simpan")
+		print_data(ticket)
+	else:
+		print("Data Batal diubah")
 
-def update_contact():
-	print_header("MENGUPDATE INFO KONTAK")
-	nama = input("Nama Kontak yang akan di-update : ")
-	exists = searching(nama)
+def update_ticket():
+	print_header("MENGUPDATE INFO ticket")
+	destinasi = input("Destinasi yang akan di-update : ")
+	exists = searching_by_destinasi(destinasi)
 	if exists:
-		print_data(nama)
-		print("EDIT FIELD [1] NAMA - [2] TELP - [3] HOBI")
-		respon = input("MASUKAN PILIHAN (1/2/3) : ")
+		print_data(exists)
+		print("EDIT FIELD [1] DESTINASI - [2] KERETA_API - [3] TERMINAL")
+		respon = input ("MASUKAN PILIHAN (1/2/3) : ")
 		if respon == "1":
-			update_contact_nama(nama)
+			update_ticket_destinasi(exists)
 		elif respon == "2":
-			update_contact_telp(nama)
+			update_ticket_kereta_api(exists)
 		elif respon == "3":
-			update_contact_hobi(nama)
-		saved = save_data_contacts()
+			update_ticket_terminal(exists)
+		saved = save_data_tickets()
 		if saved:
-			print("Data Kontak Telah di-update.")
+			print("Data ticket Telah di-update.")
 		else:
 			print("Kesalahan saat menyimpan")
-
+	
 	else:
 		print("Data Tidak Ada")
 	input("Tekan ENTER untuk kembali ke MENU")
 
-
+def tent_app():
+	print_header("App ini dibuat untuk memudahkan pengguna dalam menyimpan, mencari, menambah, dan menghapus data ticket kereta api yang ada")
+	input("Tekan ENTER untuk kembali ke MENU")
+	
 def check_user_input(char):
 	char = char.upper()
 	if char == "Q":
-		print("BYE!!!")
+		print("Terima kasih telah berkunjung!")
 		return True
 	elif char == "1":
-		view_contacts()
+		view_tickets()
 	elif char == "2":
-		add_contact()
+		add_ticket()
 	elif char == "3":
-		find_contact()
+		find_ticket()
 	elif char == "4":
-		delete_contact()
+		delete_ticket()
 	elif char == "5":
-		update_contact()
+		update_ticket()
 	elif char == "6":
-		pass
+		tent_app()
 
-def load_data_contacts():
+def load_data_tickets():
 	with open(file_path, 'r') as file:
 		data = load(file)
 	return data
 
-def save_data_contacts():
+def save_data_tickets():
 	with open(file_path, 'w') as file:
-		dump(contacts, file)
+		dump(tickets, file)
 	return True
-
 
 #flag/sign/tanda menyimpan sebuah kondisi
 stop = False
-file_path = "filetxt/contacts.json"
-contacts = load_data_contacts()
+file_path = "filetxt/tiketz.json"
+tickets = load_data_tickets()
 while not stop:
 	print_menu()
 	user_input = input("Pilihan : ")
 	stop = check_user_input(user_input)
+	
